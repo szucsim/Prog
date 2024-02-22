@@ -51,3 +51,8 @@ function showAlert(message) {
 const newVariable = function notHoistedFunction() {
 
 }
+
+const btnPrimes = document.getElementById('btnPrimes');
+btnPrimes.addEventListener('click', function (evt){
+    showAlert(PrimeGenerator.generatePrimeNumbers(2000));
+});
