@@ -42,3 +42,5 @@ class Application{
         //export inherit PrimeGenerator class from application (default export)
     }
 }
+
+export default Application;
