@@ -7,12 +7,19 @@ const newVariable = function notHoistedFunction() {
 
 }
 
-import PrimeGenerator from "./PrimeGenerator.js";
-
-// Now you can create an instance of PrimeGenerator and use its methods
-const primeGenerator = new PrimeGenerator({ target: 'app-container', statusBar: 'statusBar' });
+/**
+ * @type {import('./Application').default}
+ */
+let primeGenerator;
 
 const btnPrimes = document.getElementById('btnPrimes');
 btnPrimes.addEventListener('click', function (evt){
-    showAlert(primeGenerator.generatePrimeNumbers(2000));
+    // Now you can create an instance of PrimeGenerator and use its methods
+    if(primeGenerator){
+        primeGenerator.destroy();
+    }
+    
+    import('./PrimeGenerator.js').then(function(module){
+        primeGenerator = new module.default({ target: 'app-target', statusBar: 'statusBar' });
+    });    
 });

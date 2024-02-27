@@ -1,11 +1,30 @@
 // Import the Application class
-import Application from "./Application.js";
+import Application from './Application.js';
 
 // Define a new class that inherits from Application
-class PrimeGenerator extends Application {
-    constructor(options) {
+export default class PrimeGenerator extends Application {
+
+    appName = 'PrimeGenerator';
+
+    /**
+     * @param {import('./Application').ApplicationOptions} options Options
+     */
+    constructor(options = {}) {
         super(options); // Call the constructor of the parent class
         // Additional initialization for the PrimeGenerator class if needed
+    }
+
+    initialize(){
+        super.initialize();
+
+        const divElement = document.createElement('div');
+
+        this.target.appendChild(divElement);
+    }
+
+    run(){
+        super.run();
+        this.target.lastChild.textContent = this.generatePrimeNumbers(2000);
     }
 
     generatePrimeNumbers(limit) {
@@ -19,7 +38,7 @@ class PrimeGenerator extends Application {
     
         // Loop until we reach the desired number of primes
         while (primes.length < limit) {
-            if (this.#isPrime(num)) {
+            if (this.isPrime(num)) {
                 primes.push(num);
             }
             num++;
@@ -29,7 +48,7 @@ class PrimeGenerator extends Application {
         return primes.join(',');
     }
     
-    #isPrime(number) {
+    isPrime(number) {
         if (number <= 1) {
             return false;
         }
@@ -51,6 +70,3 @@ class PrimeGenerator extends Application {
         return true;
     }
 }
-
-// Export the PrimeGenerator class
-export default PrimeGenerator;
