@@ -37,40 +37,46 @@ export default class Application{
         }
 
         let start = Date.now();
-        this.#validate(options);
-        let end = Date.now();
+        this.#validateAsync(options).then(function(){
+            let end = Date.now();
 
-        let executionTime = end - start;
-        
-        start = Date.now();
-        this.initialize();
-        end = Date.now();
-
-        executionTime += end - start;
-
-        start = Date.now();
-        this.run();
-        end = Date.now();
-
-        executionTime += end - start;
-        // $"{how it works}"
-        
-        this.statusBar.textContent = `${this.constructor.name}` + ' loaded in: ' + executionTime + 'ms';
+            let executionTime = end - start;
+            
+            start = Date.now();
+            this.initialize();
+            end = Date.now();
+    
+            executionTime += end - start;
+    
+            start = Date.now();
+            this.run();
+            end = Date.now();
+    
+            executionTime += end - start;
+            // $"{how it works}"
+            
+            this.statusBar.textContent = `${this.constructor.name}` + ' loaded in: ' + executionTime + 'ms';
+        }.bind(this));        
     } 
 
     /**
      * Validates the constructor arguments.
      * @param {ApplicationOptions} options 
      */
-    #validate(options){
+    async #validateAsync(options){
         this.target = validateHTMLElementId(options.target);
         if(this.target === null) throw new Error('Param: Target must be a valid ID');
 
         this.statusBar = validateHTMLElementId(options.statusBar);
         if(this.statusBar === null) throw new Error('Param: statusbar must be a valid ID');
 
-        if(options.htmlTemplate){
-            this.htmlTemplate = options.htmlTemplate;
+        if(options.htmlTemplate){        
+            const response = await fetch(options.htmlTemplate);
+            if (response.status !== 200) {
+                throw new Error('Could not load HTML template');
+            }
+            const data = await response.text();
+            this.htmlTemplateString = data;
         }
     }
 
@@ -78,24 +84,7 @@ export default class Application{
      * Initialize the application's (typically GUI) state
      */
     initialize(){
-        console.log('Initialization() function');
-
-        if (this.htmlTemplate) {
-            fetch(this.htmlTemplate).then(response => {
-                if (response.status !== 200) {
-                    throw new Error('Could not load HTML template');
-                }
-
-                response.text().then(data => {
-                    console.log(data);
-                    this.htmlTemplateString = data;
-
-                    if(this.htmlTemplateString){
-                        this.target.innerHTML = this.htmlTemplateString;
-                    }
-                });
-            });
-        }
+        console.log('Initialization() function');    
     }
 
     /**

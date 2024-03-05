@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function(){
             }
 
             import(`./app/${modulName}.js`).then(function(module){
-                app = new module.default({ target: 'app-target', statusBar: 'statusBar', htmlTemplate: htmlTemplateName ? `./app/${modulName}.html` : undefined });
+                app = new module.default({ target: 'app-target', statusBar: 'statusBar', htmlTemplate: htmlTemplateName ? `./app/${htmlTemplateName}.html` : undefined });
             });
         });
     });

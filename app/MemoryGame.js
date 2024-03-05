@@ -14,7 +14,22 @@ export default class MemoryGame extends Application {
     initialize(){
         super.initialize();
 
- 
+        if(this.htmlTemplateString){
+            const domParser = new DOMParser();
+            const domElement = domParser.parseFromString(this.htmlTemplateString, 'text/html');
+            for (let child of domElement.body.children){
+                document.adoptNode(child);
+                this.target.appendChild(child);
+            }            
+        }
+
+        const cards = this.target.querySelectorAll('.memory-game-card');
+        for(let cardEleme of cards){
+            cardEleme.addEventListener('click', function(){
+                cardEleme.classList.toggle('face-down');
+                cardEleme.classList.toggle('face-up');
+            });
+        }
     }
 
     run(){
