@@ -4,14 +4,11 @@ import Application from './Application.js';
 // Define a new class that inherits from Application
 export default class PrimeGenerator extends Application {
 
-    appName = 'PrimeGenerator';
-
     /**
-     * @param {import('./Application').ApplicationOptions} options Options
+     * @param {import('./Application.js').ApplicationOptions} options Options
      */
     constructor(options = {}) {
-        super(options); // Call the constructor of the parent class
-        // Additional initialization for the PrimeGenerator class if needed
+        super(options);
     }
 
     initialize(){

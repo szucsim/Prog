@@ -4,7 +4,7 @@ import { validateHTMLElementId } from "./utils/validation.js";
  * @typedef {Object} ApplicationOptions
  * @property {string} {target} The application's display target.
  * @property {string} {statusBar} The status bar target id
- */
+ * @property {string} {htmlTemplate} */
 
 export default class Application{
 
@@ -18,11 +18,21 @@ export default class Application{
      */
     statusBar;
 
+    /**
+     * @type {string|undefined}
+     */
+    htmlTemplateString;
+
+    /**
+     * @type {string|undefined}
+     */
+    htmlTemplate;
+
     /** 
      * @param {ApplicationOptions} options 
      */
     constructor(options = {}){
-        if(this.construtor === Application){
+        if(this.constructor === Application){
             throw new Error('Cannot instantiate abstract class Application');
         }
 
@@ -58,6 +68,10 @@ export default class Application{
 
         this.statusBar = validateHTMLElementId(options.statusBar);
         if(this.statusBar === null) throw new Error('Param: statusbar must be a valid ID');
+
+        if(options.htmlTemplate){
+            this.htmlTemplate = options.htmlTemplate;
+        }
     }
 
     /**
@@ -65,6 +79,23 @@ export default class Application{
      */
     initialize(){
         console.log('Initialization() function');
+
+        if (this.htmlTemplate) {
+            fetch(this.htmlTemplate).then(response => {
+                if (response.status !== 200) {
+                    throw new Error('Could not load HTML template');
+                }
+
+                response.text().then(data => {
+                    console.log(data);
+                    this.htmlTemplateString = data;
+
+                    if(this.htmlTemplateString){
+                        this.target.innerHTML = this.htmlTemplateString;
+                    }
+                });
+            });
+        }
     }
 
     /**

@@ -7,19 +7,27 @@ const newVariable = function notHoistedFunction() {
 
 }
 
-/**
- * @type {import('./Application').default}
- */
-let primeGenerator;
-
-const btnPrimes = document.getElementById('btnPrimes');
-btnPrimes.addEventListener('click', function (evt){
-    // Now you can create an instance of PrimeGenerator and use its methods
-    if(primeGenerator){
-        primeGenerator.destroy();
-    }
+document.addEventListener('DOMContentLoaded', function(){
+    /**
+    * @type {import('./app/Application.js').default}
+    */
+    let app;
     
-    import('./PrimeGenerator.js').then(function(module){
-        primeGenerator = new module.default({ target: 'app-target', statusBar: 'statusBar' });
-    });    
+    const navButtons = document.querySelectorAll('body .app-container nav button')
+
+    navButtons.forEach(element => {
+        const modulName = element.getAttribute('data-module');
+        const htmlTemplateName = element.getAttribute('data-template');
+        element.addEventListener('click', function(){
+            // Now you can create an instance of PrimeGenerator and use its methods
+            if(app){
+                app.destroy();
+            }
+
+            import(`./app/${modulName}.js`).then(function(module){
+                app = new module.default({ target: 'app-target', statusBar: 'statusBar', htmlTemplate: htmlTemplateName ? `./app/${modulName}.html` : undefined });
+            });
+        });
+    });
 });
+

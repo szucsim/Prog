@@ -26,6 +26,8 @@ main{
 
 nav{
     background-color: antiquewhite;
+    display: flex;
+    flex-direction: column;
 }
 
 nav button{
@@ -60,4 +62,25 @@ nav button:hover{
     max-height: 80%;
     background-color: gainsboro;
     position: absolute;
+    background-color: black;
+}
+
+.memory-game-grid{
+    display: grid;
+    width: 100%;
+    height: 100%;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+}
+
+.memory-game-card{
+    border: 1px solid black;
+}
+
+.memory-game-card.face-up{
+    background-color: green;
+}
+
+.memory-game-card.face-down{
+    background-color: burlywood;
 }
