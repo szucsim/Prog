@@ -139,18 +139,9 @@ export default class MemoryGame extends Application {
     }
     
     /**
-     * Reset the game by flipping all cards face down and resetting card states
+     * Reset the game by removing the MemoryGame application
      */
     #resetGame() {
         super.destroy();
-        // this.#cards.forEach(card => {
-        //     card.flip(); // Flip all cards face down
-        //     card.matched = false; // Reset card states
-        // });
-    
-        // // Reset variables
-        // this.#flippedCard1 = null;
-        // this.#flippedCard2 = null;
-        // this.#matchedPairsCount = 0;
     }
 }
