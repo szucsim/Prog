@@ -4,7 +4,7 @@ import Card from  '../memory-game/Card.js';
 
 // Define a new class that inherits from Application
 export default class MemoryGame extends Application {
-
+    
     /**
      * @type {string[]}
      */
@@ -15,10 +15,29 @@ export default class MemoryGame extends Application {
         "https://svgshare.com/i/140r.svg",
         "https://svgshare.com/i/13zs.svg",
         "https://svgshare.com/i/140i.svg",
-        "https://svgshare.com/i/13wy.svg",
+        "https://svgshare.com/i/13zt.svg",
         "https://svgshare.com/i/1428.svg"
-    ]
+    ];
 
+    /**
+     * @type {Card[]}
+     */
+    #cards = [];
+
+    /**
+     * @type {Card|null}
+     */
+    #flippedCard1 = null;
+
+    /**
+     * @type {Card|null}
+     */
+    #flippedCard2 = null;
+
+    /**
+     * @type {number}
+     */
+    #matchedPairsCount = 0;
 
     /**
      * @param {import('./Application.js').ApplicationOptions} options Options
@@ -41,42 +60,97 @@ export default class MemoryGame extends Application {
 
         const cards = this.target.querySelectorAll('.memory-game-card');
         
-        // doboule the original array
-        const urls = [...this.#availablePieces, ...this.#availablePieces];
-        let randomIndex;
-        let randomElement;
-        
+        // Double the original array
+        let urls = [...this.#availablePieces, ...this.#availablePieces];
+
         for(let cardElem of cards){
-            
-            // Generate a random index
-            randomIndex = Math.floor(Math.random() * urls.length);
-
-            // Get the random element
-            randomElement = urls[randomIndex];
-
-            // Remove the element from the array
+            const randomIndex = Math.floor(Math.random() * urls.length);
+            const randomElement = urls[randomIndex];
             urls.splice(randomIndex, 1);
 
             const card = new Card(cardElem, randomElement);
 
-            cardElem.addEventListener('click', /** @this {MemoryGame} */ function(){                
+            cardElem.addEventListener('click', () => {                
                 this.#flipCard(card);
-            }.bind(this));
+            });
         }
-    }
-
-    run(){
-        super.run();
-
-      
     }
 
     /**
      * @param {Card} card
      */
     #flipCard(card){
-        if(!card.matched){
-            card.flip();
+        if (card.matched || this.#flippedCard1 === card) {
+            // If the card is already matched or is already flipped, do nothing
+            return;
         }
+
+        if (!this.#flippedCard1) {
+            // First card flip
+            this.#flippedCard1 = card;
+        } else if (!this.#flippedCard2) {
+            // Second card flip
+            this.#flippedCard2 = card;
+        } else {
+            // Already flipped two cards, do nothing
+            return;
+        }
+
+        card.flip();
+
+        if (this.#flippedCard1 && this.#flippedCard2) {
+            // Check for match
+            if (this.#flippedCard1.url === this.#flippedCard2.url) {
+                this.#matchedPairsCount++;
+                this.#flippedCard1.matched = true;
+                this.#flippedCard2.matched = true;
+                // Match found
+                this.#flippedCard1 = null;
+                this.#flippedCard2 = null;                
+
+                // Check if all pairs are matched
+                if (this.#matchedPairsCount === this.#availablePieces.length) {
+                    alert("Congratulations! You've won the game!");
+                }
+            } else {
+                // No match, flip both cards back after a short delay
+                setTimeout(() => {
+                    this.#flippedCard1.flip();
+                    this.#flippedCard2.flip();
+                    this.#flippedCard1 = null;
+                    this.#flippedCard2 = null;
+                }, 1000);
+            }
+        }
+    }
+
+    run() {
+        super.run();
+    
+        // Set a timer for one minute
+        setTimeout(() => {
+            if (this.#matchedPairsCount !== this.#availablePieces.length) {
+                // If not all pairs are matched, alert the user that they lost
+                alert("Time's up! You've lost the game!");
+                // Reset card states
+                this.#resetGame();
+            }
+        }, 60000); // One minute in milliseconds
+    }
+    
+    /**
+     * Reset the game by flipping all cards face down and resetting card states
+     */
+    #resetGame() {
+        super.destroy();
+        // this.#cards.forEach(card => {
+        //     card.flip(); // Flip all cards face down
+        //     card.matched = false; // Reset card states
+        // });
+    
+        // // Reset variables
+        // this.#flippedCard1 = null;
+        // this.#flippedCard2 = null;
+        // this.#matchedPairsCount = 0;
     }
 }
