@@ -4,7 +4,11 @@ import Card from  '../memory-game/Card.js';
 
 // Define a new class that inherits from Application
 export default class MemoryGame extends Application {
-    
+    /**
+     * Id of the setTimeout delegate
+     */
+    #timeoutKey;
+
     /**
      * @type {string[]}
      */
@@ -18,11 +22,6 @@ export default class MemoryGame extends Application {
         "https://svgshare.com/i/13zt.svg",
         "https://svgshare.com/i/1428.svg"
     ];
-
-    /**
-     * @type {Card[]}
-     */
-    #cards = [];
 
     /**
      * @type {Card|null}
@@ -128,7 +127,7 @@ export default class MemoryGame extends Application {
         super.run();
     
         // Set a timer for one minute
-        setTimeout(() => {
+        this.#timeoutKey = setTimeout(() => {
             if (this.#matchedPairsCount !== this.#availablePieces.length) {
                 // If not all pairs are matched, alert the user that they lost
                 alert("Time's up! You've lost the game!");
@@ -143,5 +142,14 @@ export default class MemoryGame extends Application {
      */
     #resetGame() {
         super.destroy();
+    }
+
+    destroy(){
+        super.destroy();
+
+        if (!this.#timeoutKey){
+            clearTimeout(this.#timeoutKey);
+            this.#timeoutKey = undefined;
+        }
     }
 }
