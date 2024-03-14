@@ -92,3 +92,8 @@ nav button:hover{
     background-position: center;
     background-repeat: no-repeat;
 }
+
+canvas{
+    width: 100%;
+    height: 100%;
+}
