@@ -34,13 +34,39 @@ export default class Hangman extends Application{
         const charCode = key.charCodeAt();
 
         if((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123)){
-            const lowerKey = key.toLowerCase();
-            if(this.#word.includes(charCode)){
-                console.log('find out a char');
-            }else{
-                ++this.#mistakes;
-                this.#drawHangman();
+            // Find all occurrences of the character in the word
+            const positions = [];
+            for(let i = 0; i < this.#word.length; i++){
+                if(this.#word[i] === key){
+                    positions.push(i);
+                }
             }
+    
+            // Calculate the position to draw each character above the corresponding underline
+            const width = this.target.querySelector('canvas').width;
+            const height = this.target.querySelector('canvas').height;
+    
+            const placeholderWidth = width / (this.#word.length + 1);
+            const placeholderGap = placeholderWidth * 0.1; // Adjust this value as needed
+    
+            positions.forEach(index => {
+                const cursor = ((index) * placeholderWidth) + (placeholderWidth - placeholderGap);
+                const char = this.#word[index];
+    
+                // Draw the character above the underline
+                this.#ctx.font = "20px Arial";
+                this.#ctx.fillStyle = "black";
+                this.#ctx.fillText(char, cursor, height * 0.95 - 20); // Draw text above placeholder
+            });
+    
+            // If at least one occurrence is found, exit the function
+            if (positions.length > 0) {
+                return;
+            }
+            
+            // If the character is not found, increment mistakes and draw hangman
+            ++this.#mistakes;
+            this.#drawHangman();
         }
     }.bind(this);
 
@@ -69,12 +95,20 @@ export default class Hangman extends Application{
 
         this.#ctx.lineWidth = 1;
 
-        let cursor = 1;
+        // Calculate the width of each placeholder and the gap between them
+        const placeholderWidth = width / (this.#word.length + 1);
+        const placeholderGap = placeholderWidth * 0.1; // Adjust this value as needed
+
+        // Calculate the starting position for drawing the underlines
+        let cursor = (placeholderWidth - placeholderGap) / 2;
+
         for(let char of this.#word){
+            // Draw the underline (placeholder)
             this.#ctx.moveTo(cursor, height * 0.95);
-            this.#ctx.lineTo(cursor + width * 0.05, height * 0.95);
+            this.#ctx.lineTo(cursor + placeholderWidth - placeholderGap, height * 0.95);
             this.#ctx.stroke();
-            cursor += width * 0.1;
+
+            cursor += placeholderWidth; // Move to the next position
         }
 
         window.addEventListener('keypress', this.onKeyPress);
